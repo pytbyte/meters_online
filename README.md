@@ -1,4 +1,4 @@
-# ![METERS_ONLINE]](./splash.png)
+![METERS_ONLINE]](./splash.png)
 
 * Piped Water Management System
 
