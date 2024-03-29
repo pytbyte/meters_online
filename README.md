@@ -1,4 +1,4 @@
-![METERS_ONLINE]](https://github.com/pytbyte/meters_online/blob/main/meters_online_frontend/splash.jpg)
+![METERS_ONLINE](https://github.com/pytbyte/meters_online/blob/main/meters_online_frontend/splash.jpg)
 
 * Piped Water Management System
 
