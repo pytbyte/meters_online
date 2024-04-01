@@ -68,3 +68,7 @@ class Admins(db.Model):
     @staticmethod
     def get_Admin_by_phone(phone_number):
         return Admins.query.filter_by(contact=phone_number).first()
+        
+    @staticmethod
+    def get_Admin_by_name(name):
+        return Admins.query.filter_by(name=name).first()
