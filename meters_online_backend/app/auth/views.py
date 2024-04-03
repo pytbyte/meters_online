@@ -6,11 +6,12 @@ from .. worker.models.MaWorker import worker_schema
 from .models.TokenBlocklist import TokenBlocklist
 from .. admin.models.MaAdmin import admins_schema, admin_schema
 from .. company.models.Company import Company
+from .. customer.models.Customer import Customer
+from .. customer.models.MaCustomer import customer_schema, customers_schema
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity, get_jwt
 from werkzeug.security import generate_password_hash, check_password_hash
 from .. import jwt
 from datetime import datetime, timedelta, timezone
-from ..decorators import admin_required
 from flask_cors import cross_origin
 
 
@@ -44,8 +45,12 @@ def login():
         }
         session.update(session_data)
         company_data = Company.get_company_data(session_data['company_id'])
+        id = admin_.company_id
+        customersData = Customer.query.filter_by(company_id = id).all()
+        customer_data = customers_schema.dump(customersData)
 
-        return jsonify(jwtToken=access_token, access_token=access_token, user_type='admin', user_info=admin_schema.dump(admin_), company_data=company_data), 200
+        return jsonify(jwtToken=access_token, customer_data=customer_data ,
+                       access_token=access_token, user_type='admin', company_data=company_data, company_id = id), 200
     
     else:
         # Check if the user is a staff member
@@ -315,7 +320,7 @@ def verify_Admins(verification_code):
 
 @auth.route('/for-admins-only', methods=['GET'])
 @jwt_required()
-@admin_required
+#@admin_required
 def for_admins_only():
     return jsonify(message='Admins only!'), 200
 
@@ -348,3 +353,6 @@ def get_Adminss_by_role(role):
 @jwt_required()
 def check_token():
     return jsonify(True), 200
+
+
+

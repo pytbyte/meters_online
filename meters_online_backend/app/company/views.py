@@ -2,6 +2,12 @@ from flask import jsonify, request, session
 from .models.Company import Company
 from .. admin.models.Admin import Admins
 from .models.MaCompany import company_schema, companys_schema
+from .. billing.models.Bill import Bill
+from .. billing.models.MaBills import bill_schema, bills_schema
+from .. customer.models.Customer import Customer
+from .. customer.models.MaCustomer import customer_schema, customers_schema
+from .. meter.models.MeterReading import MeterReading
+from .. meter.models.MaMeterReading import meter_readings_schema, meter_reading_schema
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_cors import cross_origin
 
@@ -66,3 +72,38 @@ def get_company_data():
         return jsonify(message='No company found'), 404
     companyData = company_schema.dump(companys)
     return jsonify(companyData), 200
+
+
+@company.route('/summery', methods=['GET'])
+def get_company_summary():
+    try:
+        company_id = request.args.get('company_id')
+        if not company_id:
+            return jsonify(message='Company ID is required'), 400
+
+        company = Company.get_company_data(company_id)
+        if not company:
+            return jsonify(message='No company found'), 404
+
+        # Fetch bills, meter readings, and customers for the company
+        bills = Bill.query.filter_by(company_id=company_id).all()
+        meter_readings = MeterReading.query.filter_by(company_id=company_id).all()
+        customers = Customer.query.filter_by(company_id=company_id).all()
+
+        # Serialize the data
+        company_data = company_schema.dump(company)
+        bills_data = bills_schema.dump(bills)
+        meter_readings_data = meter_readings_schema.dump(meter_readings)
+        customers_data = customers_schema.dump(customers)
+
+        # Create a dictionary to hold all the data
+        data = {
+            'companyData': company_data,
+            'bills': bills_data,
+            'meter_readings': meter_readings_data,
+            'customers': customers_data
+        }
+
+        return jsonify(data), 200
+    except Exception as e:
+        return jsonify(message=str(e)), 500

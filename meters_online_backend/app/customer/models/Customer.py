@@ -48,8 +48,8 @@ class Customer(db.Model):
         return Customer.query.all()
     
     @staticmethod
-    def get_customer_by_id(id):
-        return Customer.query.get(id)
+    def get_customer_by_company_id(company_id):
+        return Customer.query.filter_by(company_id=company_id).all()
     
     @staticmethod
     def get_customer_by_contact(contact):
